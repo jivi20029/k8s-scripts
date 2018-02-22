@@ -137,7 +137,7 @@ kube_repository()
     fi
 
     #KUBE_REPO_PREFIX环境变量已经失效，需要通过MasterConfiguration对象进行设置
-    export KUBE_REPO_PREFIX=registry.cn-hangzhou.aliyuncs.com/szss_k8s
+    export KUBE_REPO_PREFIX=registry.cn-hangzhou.aliyuncs.com/qiaowei
 }
 
 #
@@ -262,7 +262,7 @@ EOF
         rm -rf $HOME/kube-flannel.yml
     fi
     wget -P $HOME/ https://raw.githubusercontent.com/coreos/flannel/${FLANNEL_VERSION}/Documentation/kube-flannel.yml
-    sed -i 's/quay.io\/coreos\/flannel/registry.cn-hangzhou.aliyuncs.com\/szss_k8s\/flannel/g' $HOME/kube-flannel.yml
+    sed -i 's/quay.io\/coreos\/flannel/registry.cn-hangzhou.aliyuncs.com\/qiaowei\/flannel/g' $HOME/kube-flannel.yml
     kubectl --namespace kube-system apply -f $HOME/kube-flannel.yml
     echo "Flannel installed successfully!"
 }
