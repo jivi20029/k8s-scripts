@@ -40,8 +40,10 @@ cat /var/log/messages
 命令查看是否是因为swap没有关闭，造成启动失败。如果是因为swap没有关闭，可注释/etc/fstab中和swap相关的配置，再重启主机，集群可正常启动。
 
 
-master节点装完后,默认是无法启动POD的，如果你只想做一台机子，进行测试 
+master节点装完后,默认是无法将POD放置在其上的，如果你只想找一台机子进行测试。
 可以执行命令
 ```bash
 kubectl taint nodes master(节点名) node-role.kuberneters.io/master-
 ```
+
+这样就可以将POD放在MASTER节点上了                
