@@ -73,7 +73,7 @@ EOF
     fi
     #docker加速器
     if [ ! -n "$DOCKER_MIRRORS" ]; then
-        export DOCKER_MIRRORS="https://5md0553g.mirror.aliyuncs.com"
+        export DOCKER_MIRRORS="https://mwb6qskh.mirror.aliyuncs.com"
     fi
     # 如果/etc/docker目录不存在，就创建目录
     if [ ! -d "/etc/docker" ]; then
