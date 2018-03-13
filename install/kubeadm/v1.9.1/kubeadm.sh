@@ -322,8 +322,8 @@ kube_help()
 
 main()
 {
-    #系统检测
-    linux_os
+    # 系统检测暂时取消，使得CENTOS和REDHAT都能使用   
+    # linux_os
     #$# 查看这个程式的参数个数
     while [[ $# -gt 0 ]]
     do
