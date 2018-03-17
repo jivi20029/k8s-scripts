@@ -135,6 +135,9 @@ kube_repository()
     if [ ! -n "$FLANNEL_VERSION" ]; then
         export FLANNEL_VERSION="v0.9.1"
     fi
+    if [ ! -n "$CALICO_VERSION" ]; then
+        export CALICO_VERSION="v3.0"
+    fi
 
     #KUBE_REPO_PREFIX环境变量已经失效，需要通过MasterConfiguration对象进行设置
     export KUBE_REPO_PREFIX=registry.cn-hangzhou.aliyuncs.com/qiaowei
@@ -225,6 +228,13 @@ kube_master_up(){
     # 参考：https://kubernetes.io/docs/reference/generated/kubeadm/
     export KUBE_ETCD_IMAGE=${KUBE_REPO_PREFIX}"/etcd-amd64:${ETCD_VERSION}"
 
+    export POD_SUBNET="192.168.0.0/16"
+
+    if [ $CNI = "flannel" ]; then
+        export POD_SUBNET="10.244.0.0/16"
+    fi 
+
+
     # 如果使用etcd集群，请使用etcd.endpoints配置
     cat > /etc/kubernetes/kubeadm.conf <<EOF
 apiVersion: kubeadm.k8s.io/v1alpha1
@@ -236,7 +246,7 @@ etcd:
     image: ${KUBE_ETCD_IMAGE}
 networking:
     serviceSubnet: 10.96.0.0/12
-    podSubnet: 10.244.0.0/16
+    podSubnet: ${POD_SUBNET}
 imageRepository: ${KUBE_REPO_PREFIX}
 tokenTTL: 0s
 token: ${KUBE_TOKEN}
@@ -258,13 +268,24 @@ EOF
     chown $(id -u):$(id -g) $HOME/.kube/config
     echo "Config admin success!"
 
-    if [ -f "$HOME/kube-flannel.yml" ]; then
-        rm -rf $HOME/kube-flannel.yml
+    if [ $CNI = "calico" ]; then
+        if [ -f "$HOME/calico.yaml" ]; then
+            rm -rf $HOME/calico.yaml
+        fi
+        wget -P $HOME/ https://docs.projectcalico.org/${CALICO_VERSION}/getting-started/kubernetes/installation/hosted/kubeadm/1.7/calico.yaml
+        kubectl --namespace kube-system apply -f $HOME/calico.yaml
+        echo "Calico installed successfully!"
     fi
-    wget -P $HOME/ https://raw.githubusercontent.com/coreos/flannel/${FLANNEL_VERSION}/Documentation/kube-flannel.yml
-    sed -i 's/quay.io\/coreos\/flannel/registry.cn-hangzhou.aliyuncs.com\/qiaowei\/flannel/g' $HOME/kube-flannel.yml
-    kubectl --namespace kube-system apply -f $HOME/kube-flannel.yml
-    echo "Flannel installed successfully!"
+
+    if [ $CNI = "flannel" ]; then
+        if [ -f "$HOME/kube-flannel.yml" ]; then
+            rm -rf $HOME/kube-flannel.yml
+        fi
+        wget -P $HOME/ https://raw.githubusercontent.com/coreos/flannel/${FLANNEL_VERSION}/Documentation/kube-flannel.yml
+        sed -i 's/quay.io\/coreos\/flannel/registry.cn-hangzhou.aliyuncs.com\/qiaowei\/flannel/g' $HOME/kube-flannel.yml
+        kubectl --namespace kube-system apply -f $HOME/kube-flannel.yml
+        echo "Flannel installed successfully!"
+    fi
 }
 
 #
@@ -319,9 +340,11 @@ kube_help()
     echo "       unkown command $0 $@"
 }
 
-
 main()
 {
+    # 默认网络类型为calico
+    export CNI="calico"
+
     # 系统检测暂时取消，使得CENTOS和REDHAT都能使用   
     # linux_os
     #$# 查看这个程式的参数个数
@@ -361,6 +384,11 @@ main()
                 #向左移动位置一个参数位置
                 shift
             ;;
+            --cni)
+                export CNI=$2
+                #向左移动位置一个参数位置
+                shift
+            ;;
             #重置集群
             r|reset)
                 kube_reset
@@ -379,6 +407,12 @@ main()
         shift
     done
 
+
+    # echo $CNI
+    # if [ $CNI = "flannel" ]; then
+    #     echo "abc"
+    # fi
+
     if [ "" == "$MASTER_ADDRESS" -o "" == "$NODE_TYPE" ];then
         if [ "$NODE_TYPE" != "down" ];then
             echo "--master-address and --node-type must be provided!"
@@ -386,17 +420,17 @@ main()
         fi
     fi
 
- case $NODE_TYPE in
-    "m" | "master" )
-        kube_master_up
-        ;;
-    "n" | "node" )
-        kube_slave_up
-        ;;
-    *)
-        kube_help
-        ;;
- esac
+    case $NODE_TYPE in
+        "m" | "master" )
+            kube_master_up
+            ;;
+        "n" | "node" )
+            kube_slave_up
+            ;;
+        *)
+            kube_help
+            ;;
+    esac
 }
 
 main $@
