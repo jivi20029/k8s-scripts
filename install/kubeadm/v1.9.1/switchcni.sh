@@ -51,14 +51,14 @@ download_calico_yml(){
         rm -rf $HOME/calico.yaml
     fi
     wget -P $HOME/ https://docs.projectcalico.org/${CALICO_VERSION}/getting-started/kubernetes/installation/hosted/kubeadm/1.7/calico.yaml
- 	sed -i 's/quay.io\/coreos\/etcd/registry.cn-hangzhou.aliyuncs.com\/qiaowei\/etcd-amd64/g' $HOME/calico.yaml
+ 	sed -i 's/quay.io\/coreos\/etcd:v3.1.10/registry.cn-hangzhou.aliyuncs.com\/qiaowei\/etcd-amd64:3.1.10/g' $HOME/calico.yaml
     sed -i 's/quay.io\/calico\//registry.cn-hangzhou.aliyuncs.com\/qiaowei\/calico-/g' $HOME/calico.yaml
 }
 
 install_calico(){
 	echo "begin install calico"
 	download_calico_yml
-    kubectl --namespace kube-system apply -f $HOME/calico.yaml
+    kubectl --namespace kube-system apply -f $HOME/calico.yaml   
     echo "Calico installed successfully!"
 }
 
