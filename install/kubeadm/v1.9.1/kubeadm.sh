@@ -273,6 +273,8 @@ EOF
             rm -rf $HOME/calico.yaml
         fi
         wget -P $HOME/ https://docs.projectcalico.org/${CALICO_VERSION}/getting-started/kubernetes/installation/hosted/kubeadm/1.7/calico.yaml
+        sed -i 's/quay.io\/coreos\/etcd/registry.cn-hangzhou.aliyuncs.com\/qiaowei\/etcd-amd64/g' $HOME/calico.yaml
+         sed -i 's/quay.io\/calico\//registry.cn-hangzhou.aliyuncs.com\/qiaowei\/calico-/g' $HOME/calico.yaml
         kubectl --namespace kube-system apply -f $HOME/calico.yaml
         echo "Calico installed successfully!"
     fi
