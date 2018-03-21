@@ -1,9 +1,9 @@
 1~2台centos 7虚机
 
-| 虚机名称        | IP            |
-| ------------- |:-------------:|
-| master        | 172.16.120.191|
-| node01        | 172.16.120.192|
+| 虚机名称        | IP              |
+| -------------  |:---------------:|
+| master         | 192.168.136.130 |
+| node01         | 192.168.136.131 |
 
 
 
@@ -20,12 +20,12 @@ chmod a+x kubeadm.sh
 
 在主节点执行下面的命令：
 ```bash
-sh kubeadm.sh --node-type master --master-address 172.16.120.191
+sh kubeadm.sh --node-type master --master-address 192.168.136.130
 ```
 
 在从节点执行下面的命令：
 ```bash
-sh kubeadm.sh --node-type node --master-address 172.16.120.191
+sh kubeadm.sh --node-type node --master-address 192.168.136.130
 ```
 
 安装重置：
