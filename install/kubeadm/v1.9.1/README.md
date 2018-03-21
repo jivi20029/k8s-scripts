@@ -41,9 +41,12 @@ cat /var/log/messages
 
 
 master节点装完后,默认是无法将POD放置在其上的，如果你只想找一台机子进行测试。
-可以执行命令
+可以执行命令 开启某个MASTER
 ```bash
-kubectl taint nodes master(节点名) node-role.kuberneters.io/master-
+kubectl taint nodes master(节点名) node-role.kubernetes.io/master-
 ```
-
+或者 全部
+```bash
+kubectl taint nodes --all node-role.kubernetes.io/master-
+```
 这样就可以将POD放在MASTER节点上了                
