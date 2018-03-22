@@ -357,12 +357,12 @@ kube_help()
 #
 kube_backup()
 {
-    export KUBE_BACKUP_HOME=$HOME/kube_backup/
+    export KUBE_BACKUP_HOME=$HOME/kube_backup
     if [ ! -d "$KUBE_BACKUP_HOME" ]; then
         mkdir $KUBE_BACKUP_HOME
     fi
 
-    if [ ! -d "/etc/kubernetes/"]; then
+    if [ ! -d "/etc/kubernetes/" ]; then
         echo "/etc/kubernetes/ not exists."
         exit 1
     fi
