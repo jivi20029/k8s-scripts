@@ -33,6 +33,15 @@ sh kubeadm.sh --node-type node --master-address 192.168.136.130
 ```bash
 sh kubeadm.sh reset
 ```
+安装重置默认会备份/etc/kubernetes和/var/lib/etcd，如果你不想备份请使用
+```bash
+sh kubeadm.sh reset --backup no
+```
+
+备份/etc/kubernetes和/var/lib/etcd：
+```bash
+sh kubeadm.sh backup
+```
 
 如果机器重启之后，集群启动失败，kubelet启动报错，可使用
 ```bash
