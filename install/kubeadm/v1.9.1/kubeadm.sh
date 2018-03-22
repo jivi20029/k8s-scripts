@@ -207,6 +207,26 @@ EOF
     echo "Kubelet installed successfully!"
 }
 
+install_calico(){
+    if [ -f "$HOME/calico.yaml" ]; then
+        rm -rf $HOME/calico.yaml
+    fi
+    wget -P $HOME/ https://docs.projectcalico.org/${CALICO_VERSION}/getting-started/kubernetes/installation/hosted/kubeadm/1.7/calico.yaml
+    sed -i 's/quay.io\/coreos\/etcd:v3.1.10/registry.cn-hangzhou.aliyuncs.com\/qiaowei\/etcd-amd64:3.1.10/g' $HOME/calico.yaml
+    sed -i 's/quay.io\/calico\//registry.cn-hangzhou.aliyuncs.com\/qiaowei\/calico-/g' $HOME/calico.yaml
+    kubectl --namespace kube-system apply -f $HOME/calico.yaml
+    echo "Calico installed successfully!"
+}
+
+install_flannel(){
+    if [ -f "$HOME/kube-flannel.yml" ]; then
+        rm -rf $HOME/kube-flannel.yml
+    fi
+    wget -P $HOME/ https://raw.githubusercontent.com/coreos/flannel/${FLANNEL_VERSION}/Documentation/kube-flannel.yml
+    sed -i 's/quay.io\/coreos\/flannel/registry.cn-hangzhou.aliyuncs.com\/qiaowei\/flannel/g' $HOME/kube-flannel.yml
+    kubectl --namespace kube-system apply -f $HOME/kube-flannel.yml
+    echo "Flannel installed successfully!"
+}
 
 #
 #启动主节点
@@ -269,24 +289,11 @@ EOF
     echo "Config admin success!"
 
     if [ $CNI = "calico" ]; then
-        if [ -f "$HOME/calico.yaml" ]; then
-            rm -rf $HOME/calico.yaml
-        fi
-        wget -P $HOME/ https://docs.projectcalico.org/${CALICO_VERSION}/getting-started/kubernetes/installation/hosted/kubeadm/1.7/calico.yaml
-        sed -i 's/quay.io\/coreos\/etcd:v3.1.10/registry.cn-hangzhou.aliyuncs.com\/qiaowei\/etcd-amd64:3.1.10/g' $HOME/calico.yaml
-        sed -i 's/quay.io\/calico\//registry.cn-hangzhou.aliyuncs.com\/qiaowei\/calico-/g' $HOME/calico.yaml
-        kubectl --namespace kube-system apply -f $HOME/calico.yaml
-        echo "Calico installed successfully!"
+        install_calico
     fi
 
     if [ $CNI = "flannel" ]; then
-        if [ -f "$HOME/kube-flannel.yml" ]; then
-            rm -rf $HOME/kube-flannel.yml
-        fi
-        wget -P $HOME/ https://raw.githubusercontent.com/coreos/flannel/${FLANNEL_VERSION}/Documentation/kube-flannel.yml
-        sed -i 's/quay.io\/coreos\/flannel/registry.cn-hangzhou.aliyuncs.com\/qiaowei\/flannel/g' $HOME/kube-flannel.yml
-        kubectl --namespace kube-system apply -f $HOME/kube-flannel.yml
-        echo "Flannel installed successfully!"
+        install_flannel
     fi
 }
 
@@ -327,10 +334,12 @@ kube_reset()
     # 删除rpm安装包
     yum remove -y kubectl kubeadm kubelet kubernetes-cni socat
 
-    #ifconfig cni0 down
-    ip link delete cni0
-    #ifconfig flannel.1 down
-    ip link delete flannel.1
+    if [ $CNI = "flannel" ]; then
+        #ifconfig cni0 down
+        ip link delete cni0
+        #ifconfig flannel.1 down
+        ip link delete flannel.1
+    fi
 }
 
 
@@ -340,6 +349,39 @@ kube_help()
     echo "       $0 --node-type node --master-address 127.0.0.1 --token xxxx"
     echo "       $0 reset     reset the kubernetes cluster,include all data!"
     echo "       unkown command $0 $@"
+}
+
+
+# 
+# 备份 /etc/kubernetes 文件 和 /var/lib/etcd
+#
+kube_backup()
+{
+    export KUBE_BACKUP_HOME=$HOME/kube_backup/
+    if [ ! -d "KUBE_BACKUP_HOME" ]; then
+        mkdir $KUBE_BACKUP_HOME
+    fi
+
+    if [ ! -d "/etc/kubernetes/"]; then
+        echo "/etc/kubernetes/ not exists."
+        exit 1
+    fi
+
+    export $KUBE_BACKUP_TMP=$KUBE_BACKUP_HOME/tmp
+    if [ -d "$KUBE_BACKUP_TMP"]; then 
+        rm -rf $KUBE_BACKUP_TMP
+    fi
+
+    cp /etc/kubernetes/ $KUBE_BACKUP_TMP -r 
+
+    # 假如是使用的外部ETCD，不一定有这个文件夹   
+    if [ -d "/var/lib/etcd/"]; then
+        cp /var/lib/etcd $KUBE_BACKUP_TMP -r 
+    fi
+
+    export BACKUP_FILE_NAME=`date '+%Y%m%d-%H%M%S'.tar.gz`
+    tar -cvzf $KUBE_BACKUP_HOME/$BACKUP_FILE_NAME $KUBE_BACKUP_TMP
+
 }
 
 main()
@@ -390,6 +432,11 @@ main()
                 export CNI=$2
                 #向左移动位置一个参数位置
                 shift
+            ;;
+            #备份
+            backup)
+                kube_backup
+                exit 1
             ;;
             #重置集群
             r|reset)

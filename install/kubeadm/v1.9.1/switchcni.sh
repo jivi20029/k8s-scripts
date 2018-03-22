@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 #set -x
 #如果任何语句的执行结果不是true则应该退出,set -o errexit和set -e作用相同
 set -e
