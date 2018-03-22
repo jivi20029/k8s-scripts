@@ -358,7 +358,7 @@ kube_help()
 kube_backup()
 {
     export KUBE_BACKUP_HOME=$HOME/kube_backup/
-    if [ ! -d "KUBE_BACKUP_HOME" ]; then
+    if [ ! -d "$KUBE_BACKUP_HOME" ]; then
         mkdir $KUBE_BACKUP_HOME
     fi
 
