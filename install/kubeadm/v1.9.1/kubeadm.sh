@@ -360,7 +360,7 @@ kube_backup()
     export KUBE_BACKUP_HOME=$HOME/kube_backup
     if [ ! -d "$KUBE_BACKUP_HOME" ]; then
         mkdir $KUBE_BACKUP_HOME
-        echo "1:$KUBE_BACKUP_HOME"
+        # echo "1:$KUBE_BACKUP_HOME"
     fi
 
     if [ ! -d "/etc/kubernetes/" ]; then
@@ -372,7 +372,7 @@ kube_backup()
     if [ -d "$KUBE_BACKUP_TMP" ]; then 
         rm -rf $KUBE_BACKUP_TMP
         mkdir $KUBE_BACKUP_TMP
-        echo "2:$KUBE_BACKUP_TMP"
+        # echo "2:$KUBE_BACKUP_TMP"
     fi
 
     cp /etc/kubernetes/ $KUBE_BACKUP_TMP -r 
@@ -380,14 +380,14 @@ kube_backup()
     # 假如是使用的外部ETCD，不一定有这个文件夹   
     if [ -d "/var/lib/etcd/" ]; then
         cp /var/lib/etcd/ $KUBE_BACKUP_TMP -r 
-        echo "3:"
+        # echo "3:"
     fi
 
-    echo "4:"
+    # echo "4:"
     export BACKUP_FILE_NAME=`date '+%Y%m%d-%H%M%S'.tar.gz`
     tar -cvzf $KUBE_BACKUP_HOME/$BACKUP_FILE_NAME $KUBE_BACKUP_TMP
 
-    echo "5:"
+    # echo "5:"
     echo "backup finished . the backup file path is $KUBE_BACKUP_HOME/$BACKUP_FILE_NAME"
 }
 
