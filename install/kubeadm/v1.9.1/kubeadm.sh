@@ -327,6 +327,11 @@ kube_slave_up()
 #
 kube_reset()
 {
+    # reset 之前默认备份 可以使用 --nobackup 忽略
+    if [ "$KUBE_RESET_BACKUP" = "yes" ]; then 
+        kube_backup 
+    fi
+
     kubeadm reset
 
     rm -rf /var/lib/cni /etc/cni/ /run/flannel/subnet.env /etc/kubernetes/kubeadm.conf
@@ -396,6 +401,9 @@ main()
     # 默认网络类型为calico
     export CNI="calico"
 
+    # 默认reset时备份
+    export KUBE_RESET_BACKUP="yes"
+
     # 系统检测暂时取消，使得CENTOS和REDHAT都能使用   
     # linux_os
     #$# 查看这个程式的参数个数
@@ -449,6 +457,11 @@ main()
             r|reset)
                 kube_reset
                 exit 1
+            ;;
+            #RESET时是否备份
+            --backup)
+                export KUBE_RESET_BACKUP=$2
+                shift
             ;;
             #获取kubeadm的token
             -h|--help)
