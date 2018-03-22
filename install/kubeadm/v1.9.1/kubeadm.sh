@@ -370,13 +370,14 @@ kube_backup()
     export KUBE_BACKUP_TMP=$KUBE_BACKUP_HOME/tmp
     if [ -d "$KUBE_BACKUP_TMP"]; then 
         rm -rf $KUBE_BACKUP_TMP
+        mkdir $KUBE_BACKUP_TMP
     fi
 
     cp /etc/kubernetes/ $KUBE_BACKUP_TMP -r 
 
     # 假如是使用的外部ETCD，不一定有这个文件夹   
     if [ -d "/var/lib/etcd/"]; then
-        cp /var/lib/etcd $KUBE_BACKUP_TMP -r 
+        cp /var/lib/etcd/ $KUBE_BACKUP_TMP -r 
     fi
 
     export BACKUP_FILE_NAME=`date '+%Y%m%d-%H%M%S'.tar.gz`
