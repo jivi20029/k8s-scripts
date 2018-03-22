@@ -367,7 +367,7 @@ kube_backup()
         exit 1
     fi
 
-    export $KUBE_BACKUP_TMP=$KUBE_BACKUP_HOME/tmp
+    export KUBE_BACKUP_TMP=$KUBE_BACKUP_HOME/tmp
     if [ -d "$KUBE_BACKUP_TMP"]; then 
         rm -rf $KUBE_BACKUP_TMP
     fi
