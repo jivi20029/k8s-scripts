@@ -368,7 +368,7 @@ kube_backup()
     fi
 
     export KUBE_BACKUP_TMP=$KUBE_BACKUP_HOME/tmp
-    if [ -d "$KUBE_BACKUP_TMP"]; then 
+    if [ -d "$KUBE_BACKUP_TMP" ]; then 
         rm -rf $KUBE_BACKUP_TMP
         mkdir $KUBE_BACKUP_TMP
     fi
@@ -376,7 +376,7 @@ kube_backup()
     cp /etc/kubernetes/ $KUBE_BACKUP_TMP -r 
 
     # 假如是使用的外部ETCD，不一定有这个文件夹   
-    if [ -d "/var/lib/etcd/"]; then
+    if [ -d "/var/lib/etcd/" ]; then
         cp /var/lib/etcd/ $KUBE_BACKUP_TMP -r 
     fi
 
