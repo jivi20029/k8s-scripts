@@ -383,7 +383,7 @@ kube_backup()
     export BACKUP_FILE_NAME=`date '+%Y%m%d-%H%M%S'.tar.gz`
     tar -cvzf $KUBE_BACKUP_HOME/$BACKUP_FILE_NAME $KUBE_BACKUP_TMP
 
-    echo 'backup finished . the backup file path is $KUBE_BACKUP_HOME/$BACKUP_FILE_NAME'
+    echo "backup finished . the backup file path is $KUBE_BACKUP_HOME/$BACKUP_FILE_NAME"
 }
 
 main()
