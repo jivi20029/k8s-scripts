@@ -113,7 +113,7 @@ main()
         shift
     done
 
-    if [ -n "$TYPE" ];then
+    if [ ! -n "$TYPE" ];then
         echo "please type the type  i | d"
         exit 1
     fi
