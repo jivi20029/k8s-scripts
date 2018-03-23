@@ -31,6 +31,11 @@ install_dashboard()
 
 }
 
+uninstall_dashboard()
+{
+    echo "uninstall dashboard"
+}
+
 install_efk()
 {
     echo "install efk"
@@ -38,9 +43,24 @@ install_efk()
     kubectl apply -f ./efk/fluentd-es-ds.yaml 
     kubectl apply -f efk/es-statefulset.yaml
     kubectl apply -f efk/es-service.yaml 
+    kubectl apply -f efk/kibana-deployment.yaml 
+    kubectl apply -f efk/kibana-service.yaml 
     
     echo "EFK installation is complete,Follow-up:"
     echo "kubectl label node [node-name] beta.kubernetes.io/fluentd-ds-ready=true"
+}
+
+uninstall_elk()
+{
+    echo "uninstall efk"
+    kubectl delete -f ./efk/fluentd-es-configmap.yaml  
+    kubectl delete -f ./efk/fluentd-es-ds.yaml 
+    kubectl delete -f efk/es-statefulset.yaml
+    kubectl delete -f efk/es-service.yaml 
+    kubectl delete -f efk/kibana-deployment.yaml 
+    kubectl delete -f efk/kibana-service.yaml 
+    
+    echo "EFK uninstallation is complete"
 }
 
 kube_help()
@@ -61,6 +81,14 @@ main()
         key="$1"
 
         case $key in
+            # install
+            i|install)
+                export TYPE="install"
+            ;;
+            # delete
+            d|delete)
+                export TYPE="delete"
+            ;;
             #dashboard
             --dashboard)
                 export ADDON_DASHBOARD="yes"
@@ -90,11 +118,19 @@ main()
     fi
 
     if [ -n "$ADDON_DASHBOARD" ];then
-        install_dashboard
+        if [ "$TYPE" = "install"]; then
+            install_dashboard
+        else
+            uninstall_dashbaord
+        fi
     fi
 
     if [ -n "$ADDON_EFK" ];then
-        install_efk
+        if [ "$TYPE" = "install"]; then
+            install_efk
+        else
+            uninstall_efk
+        fi
     fi
 }
 
