@@ -21,7 +21,7 @@ chmod a+x kubeadm.sh
 
 在主节点执行下面的命令：
 ```bash
-sh kubeadm.sh --node-type master --master-address 192.168.136.130
+sh kubeadm.sh --node-type master --master-address 192.168.136.130  [--token xxxx] [--cni calico|flannel] [--pod-network-cidr x.x.x.x]
 ```
 
 在从节点执行下面的命令：

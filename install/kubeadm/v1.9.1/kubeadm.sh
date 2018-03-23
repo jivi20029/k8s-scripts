@@ -360,7 +360,7 @@ kube_reset()
 kube_help()
 {
     echo "usage: $0 --node-type master --master-address 192.168.136.130 [--token xxxx] [--cni calico|flannel] [--pod-network-cidr x.x.x.x]"
-    echo "       $0 --node-type node --master-address 192.168.136.130[--token xxxx] [--cni calico|flannel] [--pod-network-cidr x.x.x.x]"
+    echo "       $0 --node-type node --master-address 192.168.136.130"
     echo "       $0 backup    backup the /etc/kubernetes and /var/lib/etcd"
     echo "       $0 r|reset     reset the kubernetes cluster,include all data!"
     echo "       unkown command $0 $@"
