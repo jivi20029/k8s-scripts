@@ -23,7 +23,8 @@ chmod a+x kubeadm.sh
 ```bash
 sh kubeadm.sh --node-type master --master-address 192.168.136.130  [--token xxxx] [--cni calico|flannel] [--pod-network-cidr x.x.x.x]
 ```
-
+默认使用calico网络 ，calico网络要求主机名称必须全部小写，如果有大写，请更改    
+     
 在从节点执行下面的命令：
 ```bash
 sh kubeadm.sh --node-type node --master-address 192.168.136.130
@@ -55,4 +56,6 @@ kubectl taint nodes master(节点名) node-role.kubernetes.io/master-
 ```bash
 kubectl taint nodes --all node-role.kubernetes.io/master-
 ```
-这样就可以将POD放在MASTER节点上了                
+这样就可以将POD放在MASTER节点上了   
+
+
