@@ -14,9 +14,9 @@ spec:
     protocol: TCP
     targetPort: ui
   selector:
-    k8s-app: kibana-logging
-apiVersion: v1
+    k8s-app: kibana-logging   
 ---
+apiVersion: v1
 kind: Service
 metadata:
   name: kibana-logging-1
