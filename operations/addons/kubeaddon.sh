@@ -50,7 +50,7 @@ install_efk()
     echo "kubectl label node [node-name] beta.kubernetes.io/fluentd-ds-ready=true"
 }
 
-uninstall_elk()
+uninstall_efk()
 {
     echo "uninstall efk"
     kubectl delete -f ./efk/fluentd-es-configmap.yaml  
