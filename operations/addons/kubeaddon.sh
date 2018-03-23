@@ -65,7 +65,7 @@ uninstall_elk()
 
 kube_help()
 {
-    echo "usage: $0 --dashboard --efk"
+    echo "usage: $0 i|d --dashboard --efk"
     echo "       unkown command $0 $@"
 }
 
@@ -113,8 +113,14 @@ main()
         shift
     done
 
+    if [ -n "$TYPE" ];then
+        echo "please type the type  i | d"
+        exit 1
+    fi
+
     if [ ! -n "$IS_HAVE_INSTALL" ];then
         echo 'at least one addon is required'
+        exit 1
     fi
 
     if [ -n "$ADDON_DASHBOARD" ];then
