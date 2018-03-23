@@ -9,4 +9,4 @@ chmod a+x kubeaddons.sh
 sh kubeaddons.sh [--efk] [--dashboard]
 ```
 
-注 efk 和 da
+注 efk 和 dashboard 至少安装一个   
