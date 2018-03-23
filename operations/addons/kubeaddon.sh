@@ -113,26 +113,26 @@ main()
         shift
     done
 
-    if [ ! -n "$TYPE" ];then
+    if [ ! -n "$TYPE" ]; then
         echo "please type the type  i | d"
         exit 1
     fi
 
-    if [ ! -n "$IS_HAVE_INSTALL" ];then
+    if [ ! -n "$IS_HAVE_INSTALL" ]; then
         echo 'at least one addon is required'
         exit 1
     fi
 
-    if [ -n "$ADDON_DASHBOARD" ];then
-        if [ "$TYPE" = "install"]; then
+    if [ -n "$ADDON_DASHBOARD" ]; then
+        if [ "$TYPE" = "install" ]; then
             install_dashboard
         else
             uninstall_dashbaord
         fi
     fi
 
-    if [ -n "$ADDON_EFK" ];then
-        if [ "$TYPE" = "install"]; then
+    if [ -n "$ADDON_EFK" ]; then
+        if [ "$TYPE" = "install" ]; then
             install_efk
         else
             uninstall_efk
