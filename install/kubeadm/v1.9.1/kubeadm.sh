@@ -248,18 +248,17 @@ kube_master_up(){
     # 参考：https://kubernetes.io/docs/reference/generated/kubeadm/
     export KUBE_ETCD_IMAGE=${KUBE_REPO_PREFIX}"/etcd-amd64:${ETCD_VERSION}"
 
+    # 默认calico网络，使用calico默认的网段
     export POD_SUBNET="192.168.0.0/16"
-
-    # calico 网络可以设置 CIDR      
-    if [ $CNI = "calico" ];then
-        if [ -n "$POD_NETWORK_CIDR" ];then 
-            export POD_SUBNET="$POD_NETWORK_CIDR"
-        fi
-    fi
 
     if [ $CNI = "flannel" ]; then
         export POD_SUBNET="10.244.0.0/16"
     fi 
+
+    # 如果设置了POD_NETWORK_CIDR则使用设置的，无论什么网络     
+    if [ -n "$POD_NETWORK_CIDR" ];then 
+        export POD_SUBNET="$POD_NETWORK_CIDR"
+    fi
 
     # 如果使用etcd集群，请使用etcd.endpoints配置
     cat > /etc/kubernetes/kubeadm.conf <<EOF
@@ -353,11 +352,11 @@ kube_reset()
     fi
 }
 
-
 kube_help()
 {
-    echo "usage: $0 --node-type master --master-address 127.0.0.1 --token xxxx"
-    echo "       $0 --node-type node --master-address 127.0.0.1 --token xxxx"
+    echo "usage: $0 --node-type master --master-address 192.168.136.130 [--token xxxx] [--cni calico|flannel] [--pod-network-cidr x.x.x.x]"
+    echo "       $0 --node-type node --master-address 192.168.136.130[--token xxxx] [--cni calico|flannel] [--pod-network-cidr x.x.x.x]"
+    echo "       $0 backup    backup the /etc/kubernetes and /var/lib/etcd"
     echo "       $0 reset     reset the kubernetes cluster,include all data!"
     echo "       unkown command $0 $@"
 }
