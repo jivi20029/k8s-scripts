@@ -36,7 +36,9 @@ install_efk()
     echo "install efk"
     kubectl apply -f ./efk/fluentd-es-configmap.yaml  
     kubectl apply -f ./efk/fluentd-es-ds.yaml 
-
+    kubectl apply -f efk/es-statefulset.yaml
+    kubectl apply -f efk/es-service.yaml 
+    
     echo "EFK installation is complete,Follow-up:"
     echo "kubectl label node [node-name] beta.kubernetes.io/fluentd-ds-ready=true"
 }
