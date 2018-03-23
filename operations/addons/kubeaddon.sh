@@ -27,12 +27,18 @@ linux_os()
 
 install_dashboard()
 {
-    echo "install_dashboard"
+    echo "install dashboard"
+
 }
 
 install_efk()
 {
-    echo "install_efk"
+    echo "install efk"
+    kubectl apply -f ./efk/fluentd-es-configmap.yaml  
+    kubectl apply -f ./efk/fluentd-es-ds.yaml 
+
+    echo "EFK installation is complete,Follow-up:"
+    echo "kubectl label node [node-name] beta.kubernetes.io/fluentd-ds-ready=true"
 }
 
 kube_help()
