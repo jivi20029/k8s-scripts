@@ -250,10 +250,16 @@ kube_master_up(){
 
     export POD_SUBNET="192.168.0.0/16"
 
+    # calico 网络可以设置 CIDR      
+    if [ $CNI = "calico" ];then
+        if [ -n "$POD_NETWORK_CIDR" ];then 
+            export POD_SUBNET="$POD_NETWORK_CIDR"
+        fi
+    fi
+
     if [ $CNI = "flannel" ]; then
         export POD_SUBNET="10.244.0.0/16"
     fi 
-
 
     # 如果使用etcd集群，请使用etcd.endpoints配置
     cat > /etc/kubernetes/kubeadm.conf <<EOF
@@ -328,9 +334,9 @@ kube_slave_up()
 kube_reset()
 {
     # reset 之前默认备份 可以使用 --nobackup 忽略
-    if [ "$KUBE_RESET_BACKUP" = "yes" ]; then 
-        kube_backup 
-    fi
+    # if [ "$KUBE_RESET_BACKUP" = "yes" ]; then 
+    #     kube_backup 
+    # fi
 
     kubeadm reset
 
@@ -443,6 +449,12 @@ main()
                 #向左移动位置一个参数位置
                 shift
             ;;
+            #获取kubeadm的token
+            --pod-network-cidr)
+                export POD_NETWORK_CIDR=$2
+                #向左移动位置一个参数位置
+                shift
+            ;;
             --cni)
                 export CNI=$2
                 #向左移动位置一个参数位置
@@ -459,10 +471,10 @@ main()
                 exit 1
             ;;
             #RESET时是否备份
-            --backup)
-                export KUBE_RESET_BACKUP=$2
-                shift
-            ;;
+            # --backup)
+            #     export KUBE_RESET_BACKUP=$2
+            #     shift
+            # ;;
             #获取kubeadm的token
             -h|--help)
                 kube_help
@@ -475,7 +487,6 @@ main()
         esac
         shift
     done
-
 
     # echo $CNI
     # if [ $CNI = "flannel" ]; then
