@@ -93,7 +93,7 @@ spec:
       hostNetwork: true
       containers:
         - name: calico-etcd
-          image: registry.cn-hangzhou.aliyuncs.com/qiaowei/etcd-amd64:v3.1.10
+          image: registry.cn-hangzhou.aliyuncs.com/qiaowei/etcd-amd64:3.1.10
           env:
             - name: CALICO_ETCD_IP
               valueFrom:
