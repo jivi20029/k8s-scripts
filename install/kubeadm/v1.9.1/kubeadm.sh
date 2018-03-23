@@ -53,6 +53,10 @@ firewalld_stop()
 #
 docker_install()
 {
+    count=`rpm -qa |grep docker | wc -l` 
+    if [ $count != "0" ] ; then 
+        return 
+    fi
     # dockerproject docker源
     cat > /etc/yum.repos.d/docker.repo <<EOF
 [docker-repo]
@@ -211,10 +215,11 @@ install_calico(){
     if [ -f "$HOME/calico.yaml" ]; then
         rm -rf $HOME/calico.yaml
     fi
-    wget -P $HOME/ https://docs.projectcalico.org/${CALICO_VERSION}/getting-started/kubernetes/installation/hosted/kubeadm/1.7/calico.yaml
-    sed -i 's/quay.io\/coreos\/etcd:v3.1.10/registry.cn-hangzhou.aliyuncs.com\/qiaowei\/etcd-amd64:3.1.10/g' $HOME/calico.yaml
-    sed -i 's/quay.io\/calico\//registry.cn-hangzhou.aliyuncs.com\/qiaowei\/calico-/g' $HOME/calico.yaml
-    kubectl --namespace kube-system apply -f $HOME/calico.yaml
+    # wget -P $HOME/ https://docs.projectcalico.org/${CALICO_VERSION}/getting-started/kubernetes/installation/hosted/kubeadm/1.7/calico.yaml
+    # sed -i 's/quay.io\/coreos\/etcd:v3.1.10/registry.cn-hangzhou.aliyuncs.com\/qiaowei\/etcd-amd64:3.1.10/g' $HOME/calico.yaml
+    # sed -i 's/quay.io\/calico\//registry.cn-hangzhou.aliyuncs.com\/qiaowei\/calico-/g' $HOME/calico.yaml
+    # kubectl --namespace kube-system apply -f $HOME/calico.yaml
+    kubectl --namespace kube-system apply -f $PWD/calico.yaml
     echo "Calico installed successfully!"
 }
 
