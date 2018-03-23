@@ -39,8 +39,8 @@ uninstall_dashboard()
 install_efk()
 {
     echo "install efk"
-    kubectl apply -f ./efk/fluentd-es-configmap.yaml  
-    kubectl apply -f ./efk/fluentd-es-ds.yaml 
+    kubectl apply -f efk/fluentd-es-configmap.yaml  
+    kubectl apply -f efk/fluentd-es-ds.yaml 
     kubectl apply -f efk/es-statefulset.yaml
     kubectl apply -f efk/es-service.yaml 
     kubectl apply -f efk/kibana-deployment.yaml 
@@ -53,12 +53,12 @@ install_efk()
 uninstall_efk()
 {
     echo "uninstall efk"
-    kubectl delete -f ./efk/fluentd-es-configmap.yaml  
-    kubectl delete -f ./efk/fluentd-es-ds.yaml 
-    kubectl delete -f efk/es-statefulset.yaml
-    kubectl delete -f efk/es-service.yaml 
-    kubectl delete -f efk/kibana-deployment.yaml 
     kubectl delete -f efk/kibana-service.yaml 
+    kubectl delete -f efk/kibana-deployment.yaml 
+    kubectl delete -f efk/es-service.yaml 
+    kubectl delete -f efk/es-statefulset.yaml
+    kubectl delete -f efk/fluentd-es-ds.yaml 
+    kubectl delete -f efk/fluentd-es-configmap.yaml  
     
     echo "EFK uninstallation is complete"
 }
